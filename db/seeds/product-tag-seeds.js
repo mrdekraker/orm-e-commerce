@@ -116,7 +116,7 @@ const productTagData = [
   {
     product_id: 5,
     tag_id: 7, // Bleu Cheese
-  }
+  },
   {
     product_id: 6, // Soft Drink
     tag_id: 8, // Coke
@@ -140,7 +140,7 @@ const productTagData = [
   {
     product_id: 7,
     tag_id: 13, // Imported
-  }
+  },
 ];
 
 const seedProductTags = () => ProductTag.bulkCreate(productTagData);
