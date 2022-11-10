@@ -2,18 +2,17 @@ const router = require('express').Router();
 const { Tag, Product, ProductTag } = require('../../models');
 
 router.get('/', (req, res) => {
-  // find all tags
-  // be sure to include its associated Product data
+  // find all tags with associated Product data
   Tag.findAll({
     include: [
       {
         model: Product,
         through: ProductTag,
-        as: 'tagged_products',
+        as: 'productTag_product',
       },
     ],
   })
-    .then((dbTagData) => res.json(dbTagData))
+    .then((TagData) => res.json(TagData))
     .catch((err) => {
       console.log(err);
       res.status(500).json(err);
