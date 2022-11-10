@@ -62,16 +62,17 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
   // create a new product
   Product.create(req.body)
-    .then((dbProductData) => {
+    .then((product) => {
+      // if there's product tags, we need to create pairings to bulk create in the ProductTag model
       if (req.body.tagIds.length) {
-        const productTagIdArr = req.body.tagIds.map((tagId) => ({
-          product_id: dbProductData.id,
-          tagId,
+        const productTagIdArr = req.body.tagIds.map((tag_id) => ({
+          product_id: product.id,
+          tag_id,
         }));
         return ProductTag.bulkCreate(productTagIdArr);
       }
       // if no product tags, just respond
-      res.status(200).json(dbProductData);
+      res.status(200).json(product);
     })
     .then((productTagIds) => res.status(200).json(productTagIds))
     .catch((err) => {
@@ -80,6 +81,7 @@ router.post('/', (req, res) => {
     });
 });
 
+// update product
 router.put('/:id', (req, res) => {
   // update product data
   Product.update(req.body, {
@@ -93,17 +95,17 @@ router.put('/:id', (req, res) => {
     )
     .then((productTags) => {
       // get list of current tag_ids
-      const productTagIds = productTags.map(({ tagId }) => tagId);
+      const productTagIds = productTags.map(({ tag_id }) => tag_id);
       // create filtered list of new tag_ids
       const newProductTags = req.body.tagIds
-        .filter((tagId) => !productTagIds.includes(tagId))
-        .map((tagId) => ({
+        .filter((tag_id) => !productTagIds.includes(tag_id))
+        .map((tag_id) => ({
           product_id: req.params.id,
-          tagId,
+          tag_id,
         }));
       // figure out which ones to remove
       const productTagsToRemove = productTags
-        .filter(({ tagId }) => !req.body.tagIds.includes(tagId))
+        .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
         .map(({ id }) => id);
 
       // run both actions
